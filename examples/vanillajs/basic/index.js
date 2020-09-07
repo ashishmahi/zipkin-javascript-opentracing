@@ -1,5 +1,5 @@
 const express = require("express");
-const ZipkinJavascriptOpentracing = require("../../lib/index");
+const ZipkinJavascriptOpentracing = require("../../../lib/index");
 
 const { recorder } = require("../recorder");
 
@@ -18,6 +18,7 @@ app.use(function zipkinExpressMiddleware(req, res, next) {
       statusCode: "200",
       objectId: "42"
     });
+    span.setTag("Foo", "Bar");
   }, 100);
 
   setTimeout(() => {
