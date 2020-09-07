@@ -256,23 +256,17 @@ describe("Opentracing interface", () => {
       });
 
       it("should log data", () => {
-        span.log("data to log");
+        span.log({ event: "data_received", data: "42" });
 
         // should do it in a scope
         expect(zipkinTracer.scoped).toHaveBeenCalled();
         zipkinTracer.scoped.mock.calls[0][0]();
 
-        expect(zipkinTracer.recordMessage).toHaveBeenCalledWith("data to log");
-      });
-
-      it("should not log if empty data is passed", () => {
-        span.log();
-
-        // should do it in a scope
-        expect(zipkinTracer.scoped).toHaveBeenCalled();
-        zipkinTracer.scoped.mock.calls[0][0]();
-
-        expect(zipkinTracer.recordMessage).not.toHaveBeenCalled();
+        expect(zipkinTracer.recordBinary).toHaveBeenCalledWith(
+          "event",
+          "data_received"
+        );
+        expect(zipkinTracer.recordBinary).toHaveBeenCalledWith("data", "42");
       });
 
       it("should use the right id in log", () => {
@@ -282,7 +276,7 @@ describe("Opentracing interface", () => {
 
         zipkinTracer.scoped.mockReset();
         zipkinTracer.setId.mockReset();
-        span.log("other event");
+        span.log({ event: "other event" });
 
         // should do it in a scope
         expect(zipkinTracer.scoped).toHaveBeenCalled();
@@ -291,7 +285,7 @@ describe("Opentracing interface", () => {
         zipkinTracer.scoped.mockReset();
         zipkinTracer.setId.mockReset();
 
-        otherSpan.log("yet another event");
+        otherSpan.log({ event: "yet another event" });
         // should do it in a scope
         expect(zipkinTracer.scoped).toHaveBeenCalled();
         zipkinTracer.scoped.mock.calls[0][0]();

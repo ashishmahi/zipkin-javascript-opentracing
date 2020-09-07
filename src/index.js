@@ -125,13 +125,14 @@ function SpanCreator({ tracer, serviceName, kind }) {
       }
     }
 
-    log(obj) {
+    log(obj = {}) {
       tracer.scoped(() => {
         // make sure correct id is set
-        if (obj) {
-          tracer.setId(this.id);
-          tracer.recordMessage(obj);
-        }
+        tracer.setId(this.id);
+
+        Object.entries(obj).map(([key, value]) => {
+          tracer.recordBinary(key, value);
+        });
       });
     }
     setTag(key, value) {

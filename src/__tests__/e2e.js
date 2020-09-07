@@ -180,7 +180,10 @@ describe("zipkin-javascript-opentracing", () => {
 
     it("should record logs", () => {
       const span = tracer.startSpan("My Span");
-      span.log("LogMessage");
+      span.log({
+        statusCode: "200",
+        objectId: "42"
+      });
 
       span.finish();
 
@@ -205,9 +208,13 @@ describe("zipkin-javascript-opentracing", () => {
           "duration"
         ])
       );
-      expect(json[0].annotations.length).toBe(3);
+      expect(json[0].annotations.length).toBe(2);
       expect(json[0].annotations[0].endpoint.serviceName).toBe("my service");
-      expect(json[0].annotations[0].value).toBe("LogMessage");
+      expect(json[0].binaryAnnotations.length).toBe(2);
+      expect(json[0].binaryAnnotations[0].key).toBe("statusCode");
+      expect(json[0].binaryAnnotations[0].value).toBe("200");
+      expect(json[0].binaryAnnotations[1].key).toBe("objectId");
+      expect(json[0].binaryAnnotations[1].value).toBe("42");
       expect(json[0].name).toBe("my span");
     });
   });
