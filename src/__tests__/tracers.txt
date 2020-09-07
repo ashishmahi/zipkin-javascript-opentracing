@@ -1,0 +1,30 @@
+Link to Slides : https://docs.google.com/presentation/d/1eF81v7Dnh9tZcil0TqI94eDiPxQcAOw6XNNIqivm848/edit?usp=sharing
+
+We mostly found either nodejs based libraries or libraries which can support browsers.
+We were in search of a library which can support both react-native/web-app which we have already to have consistent tracing mechanism
+
+1. opentracing / opentracing-javascript 
+    - does not have a way to record any information
+    - but has good template on how an tracer should be and what are all responsibility of tracer should be.
+    - also has globalTracing mechanism. that means, you can create a singleton tracer and use it everywhere in app.
+
+2. lightstep / lightstep-tracer-javascript 
+    - LightStep distributed tracing library for Node.js and the browser.
+    - can't use it for something like react-native platform where you have no nodejs and browser env.
+    - As we were having already tracer and tracing-api service in place. we have to adhere to request body that supported by tracer-api. and this library does not have a support to provide custom request builder. 
+
+3.   open-telemetry / opentelemetry-js 
+    - again no support for react native.
+
+4.   zipkin-javascript-opentracing
+    - this is what we were using.
+    - it was good for us as it is js library so can be used for both mobile and web.
+    - only problem with this was no logging support. that means if you want to add logs to the trace then there was no support .
+
+
+ 5. openzipkin / zipkin-js 
+    - This has support for logs and it can be used for both mobile and web. i.e pure javascript library
+    - The library which we were using was actually wrapper around it.
+    - The syntax was not very different from what we  were using then. 
+    - If we wanted to go ahead with this lirbary then again had to write wrapper around this. so that few other packages in your UI were using old library. 
+    - Hence lot of changes. so rejected this as well.
